@@ -853,8 +853,10 @@ def main():
                         default=str(DATA_DUMP))
     parser.add_argument("--log", help="Logging level - DEBUG|INFO|WARNING|ERROR|CRITICAL "
                         "[optional]")
+    parser.add_argument("--inSecure", action="store_true", default=False, 
+                        help="Use is_secure=False in connection when NOT using profile and NOT connecting to local [optional]")
     args = parser.parse_args()
-
+    
     # set log level
     log_level = LOG_LEVEL
     if args.log is not None:
@@ -877,7 +879,8 @@ def main():
     else:
         if not args.profile:
             conn = boto.dynamodb2.connect_to_region(args.region, aws_access_key_id=args.accessKey,
-                                                    aws_secret_access_key=args.secretKey)
+                                                    aws_secret_access_key=args.secretKey,
+                                                    is_secure=not(args.inSecure))
             sleep_interval = AWS_SLEEP_INTERVAL
         else:
             conn = boto.dynamodb2.connect_to_region(args.region, profile_name=args.profile)
